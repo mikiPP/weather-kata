@@ -49,38 +49,44 @@ public class WeatherForecastTest {
 	}
 
 
-	// @Test
-	// public void givenAfterSixDaysDateShouldReturnFalse() {
-	// 		/*------------------- Given --------------------- */
+	@Test
+	public void givenAfterSixDaysDateShouldReturnFalse() {
+			/*------------------- Given --------------------- */
 		
-	// 		WeatherForecast weatherForecast = new WeatherForecast();
-	// 		int days = 6;
-	// 		LocalDate date = LocalDate.of(2021,05,10);
-	// 		LocalDate secondDate  = LocalDate.of(2021,05,18);
+			WeatherForecast weatherForecast = new WeatherForecast();
+			long secondToMiliseconds = 1000;
+			long minuteToSeconds = 60;
+			long hourToMinutes = 60;
+			long dayToHours = 24;
+			long days = 6;
 
-	// 	 /*------------------- When --------------------- */
+			// We add 1 because we want to check one day after the date selected.
+			long daysToMiliseconds = (days + 1) *  dayToHours * hourToMinutes * minuteToSeconds * secondToMiliseconds;
+
+			LocalDate date = LocalDate.ofEpochDay(LocalDate.now().toEpochDay() + daysToMiliseconds);
+
+		 /*------------------- When --------------------- */
 			
-	// 		Boolean isBeforeSixdays  = weatherForecast.isDateBeforeDays(date,secondDate,days);
+			Boolean isBeforeSixdays  = weatherForecast.isDateBeforeNextDays(date,days);
 
-	// 	 /*------------------- Then  --------------------- */
-	// 		assertFalse(isBeforeSixdays);
-	// }
+		 /*------------------- Then  --------------------- */
+			assertFalse(isBeforeSixdays);
+	}
 
 
-	// @Test
-	// public void givenBeforeSixDaysDateShouldReturnTrue() {
-	// 	/*------------------- Given --------------------- */
+	@Test
+	public void givenBeforeSixDaysDateShouldReturnTrue() {
+		/*------------------- Given --------------------- */
 
-	// 		WeatherForecast weatherForecast = new WeatherForecast();
-	// 		int days = 6;
-	// 		LocalDate date = LocalDate.of(2021,05,10);
-	// 		LocalDate secondDate  = LocalDate.of(2021,05,12);
+			WeatherForecast weatherForecast = new WeatherForecast();
+			long days = 6;
+			LocalDate date = LocalDate.now();
 
-	// 	 /*------------------- When --------------------- */
+		 /*------------------- When --------------------- */
 			
-	// 		Boolean isBeforeSixdays  = weatherForecast.isDateBeforeDays(date,secondDate,days);
+			Boolean isBeforeSixDays  = weatherForecast.isDateBeforeNextDays(date,days);
 
-	// 	 /*------------------- Then  --------------------- */
-	// 		assertTrue(isBeforeSixdays);
-	// }
+		 /*------------------- Then  --------------------- */
+			assertTrue(isBeforeSixDays);
+	}
 }
