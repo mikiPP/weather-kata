@@ -1,6 +1,8 @@
 package training.weather;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -19,7 +21,8 @@ public class WeatherForecastTest {
 
 	@Test
 	public void givenNullDateShouldReturnANewDate() {
-		WeatherForecast weatherForecast = new WeatherForecast();
+		/*------------------- Given --------------------- */
+			WeatherForecast weatherForecast = new WeatherForecast();
 
 		 /*------------------- When --------------------- */
 			LocalDate date  = weatherForecast.getDate();
@@ -33,14 +36,51 @@ public class WeatherForecastTest {
 
 	@Test
 	public void givenDateShouldReturnTheDate() {
-		WeatherForecast weatherForecast = new WeatherForecast();
+		/*------------------- Given --------------------- */
+			WeatherForecast weatherForecast = new WeatherForecast();
 
 		 /*------------------- When --------------------- */
-			LocalDate date  = weatherForecast.getDate(new LocalDate.of(2021,05,10));
-			LocalDate dateToCompare = LocalDate.of(2021,05,10);
 
-			
+			LocalDate date  = LocalDate.of(2021,05,10);
+			LocalDate dateToCompare  = weatherForecast.getDate(date);
+
 		 /*------------------- Then  --------------------- */
 			assertEquals(dateToCompare.toString(), date.toString());
+	}
+
+
+	@Test
+	public void givenAfterSixDaysDateShouldReturnFalse() {
+			/*------------------- Given --------------------- */
+		
+			WeatherForecast weatherForecast = new WeatherForecast();
+			int days = 6;
+			LocalDate date = LocalDate.of(2021,05,10);
+			LocalDate secondDate  = LocalDate.of(2021,05,18);
+
+		 /*------------------- When --------------------- */
+			
+			Boolean isBeforeSixdays  = weatherForecast.isDateBeforeDays(date,secondDate,days);
+
+		 /*------------------- Then  --------------------- */
+			assertFalse(isBeforeSixdays);
+	}
+
+
+	@Test
+	public void givenBeforeSixDaysDateShouldReturnTrue() {
+		/*------------------- Given --------------------- */
+
+			WeatherForecast weatherForecast = new WeatherForecast();
+			int days = 6;
+			LocalDate date = LocalDate.of(2021,05,10);
+			LocalDate secondDate  = LocalDate.of(2021,05,12);
+
+		 /*------------------- When --------------------- */
+			
+			Boolean isBeforeSixdays  = weatherForecast.isDateBeforeDays(date,secondDate,days);
+
+		 /*------------------- Then  --------------------- */
+			assertTrue(isBeforeSixdays);
 	}
 }
