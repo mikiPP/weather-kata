@@ -25,6 +25,7 @@ Para ello se pueden realizar múltiples modificaciones siempre que se mantenga e
 
 La solución debería contener un fichero README donde se respondan estas preguntas:
 - ¿Qué has empezado implementando y por qué?
+  Los tests, para poder realizar la TDD y saber cuando he cumplido los requisitos del código.
 - ¿Qué problemas te has encontrado al implementar los tests y cómo los has solventado?
 - ¿Qué componentes has creado y por qué?
 - Si has utilizado dependencias externas, ¿por qué has escogido esas dependencias?
