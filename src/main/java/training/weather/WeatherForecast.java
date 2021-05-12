@@ -7,9 +7,7 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import org.json.JSONArray;
@@ -32,20 +30,9 @@ public class WeatherForecast {
 		}
 
 		try {
-			String cityQueryResponse = makeHttpCallToApi("search/?query=" + city);
-			JSONArray array = new JSONArray(cityQueryResponse);
-			String woe = array.getJSONObject(0).get("woeid").toString();
-			String weatherDataResponse = makeHttpCallToApi(woe);
-
-			JSONArray results = new JSONObject(weatherDataResponse).getJSONArray("consolidated_weather");
-
-			Optional<String> list = StreamSupport.stream(results.spliterator(), false)
-			.map(json -> (JSONObject)json)
-			.filter(dayData -> dayData.get("applicable_date").toString().equals(date.format(DateTimeFormatter.ofPattern(this.format))))
-			.map(daySelected -> daySelected.get("weather_state_name").toString())
-			.findFirst();
-
-			return list.isPresent() ? list.get() : "";
+			String woeid = getWoeid(city);
+			String weatherDataResponse = makeHttpCallToApi(woeid);
+			return getDaySelectedWeather(weatherDataResponse,datetime);
 
 		}	catch (IOException e) {
 			throw new Exception("Error getting data: " + e.getMessage());
@@ -53,10 +40,29 @@ public class WeatherForecast {
 	
 	}
 
+	private String getWoeid(String city) throws IOException {
+		String cityQueryResponse = makeHttpCallToApi("search/?query=" + city);
+		JSONArray array = new JSONArray(cityQueryResponse);
+		return array.getJSONObject(0).get("woeid").toString();
+	}
+
 
 	private String makeHttpCallToApi(String path) throws IOException {
 		GenericUrl uri = new GenericUrl(path != null ? url + path : url);
 		HttpRequest request = requestFactory.buildGetRequest(uri);
 		return request.execute().parseAsString();
+	}
+
+	public String getDaySelectedWeather(String weatherDataResponse,LocalDate date) {
+
+		JSONArray results = new JSONObject(weatherDataResponse).getJSONArray("consolidated_weather");
+
+		Optional<String> list = StreamSupport.stream(results.spliterator(), false)
+			.map(JSONObject.class::cast)
+			.filter(dayData -> dayData.get("applicable_date").toString().equals(date.format(DateTimeFormatter.ofPattern(this.format))))
+			.map(daySelected -> daySelected.get("weather_state_name").toString())
+			.findFirst();
+
+		return list.isPresent() ? list.get() : "";
 	}
 }
