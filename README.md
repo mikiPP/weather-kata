@@ -36,7 +36,7 @@ La solución debería contener un fichero README donde se respondan estas pregun
 - ¿Has utilizado  streams, lambdas y optionals de Java 8? ¿Qué te parece la programación funcional?
   Si, me parece que es una programación mas limpia y fácil de entender ya que el código se encapsula en pequeñas funciones haciendo más fácil la compresión y el debugear
 - ¿Qué piensas del rendimiento de la aplicación? 
-  Viendo el test que he realizado dónde se envian 100 peticiones y estas han tardado menos en proporción que el test que el test individual, diría que es bueno ya que el test individual ha tardado casi 2s mientras que el de las 100 peticiones ha tardado 100s [imagen](./Captura.png). 
+  Viendo el test que he realizado dónde se envian 100 peticiones y estas han tardado menos en proporción que el test que el test individual, diría que es bueno ya que el test individual ha tardado casi 2s mientras que el de las 100 peticiones ha tardado 100s como se puede observar en la captura añadida.
 - ¿Qué harías para mejorar el rendimiento si esta aplicación fuera a recibir al menos 100 peticiones por segundo?
   El uso de multihilos, ya que dos o más peticiones diferentes se ejecutarían a la vez, por lo tanto acabarían antes.Lo que esto llevaría un coste adicional ya que necesitamos mas recursos (memória y cpu) de la máquina que lo ejecuta.
 - ¿Cuánto tiempo has invertido para implementar la solución? 
