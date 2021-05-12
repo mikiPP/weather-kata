@@ -11,6 +11,8 @@ import java.time.format.DateTimeFormatter;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import training.time.Time;
+
 public class WeatherForecast {
 
 	private final long DAYS = 6;
@@ -18,10 +20,10 @@ public class WeatherForecast {
 	private String path = "https://www.metaweather.com/api/location/";
 
 	public String getCityWeather(String city, LocalDate datetime) throws IOException {
-		LocalDate date = getDate(datetime); 
+		LocalDate date = Time.getDate(datetime); 
 		String weather = "";
 
-		if (!isDateBeforeNextDays(date, DAYS)){
+		if (!Time.isDateBeforeNextDays(date, DAYS)){
 			return "";
 		}
 	
@@ -44,36 +46,5 @@ public class WeatherForecast {
 		}
 
 		return weather;
-	}
-
-	/**
-	 * if the date exists returns the given date if not returns a brand new date.
-	 * 
-	 * @param  date
-	 * @return LocalDate
-	 */
-	public LocalDate getDate(LocalDate date) {
-		return date != null ? date : LocalDate.now();
-	}
-
-	/**
-	 * Given a date and a number of days returns if the date is before than today and the days selected
-	 * 
-	 * @param  date the date that will be checked if is before.
-	 * @param days the number of days after today that will be compared.
-	 * @return a boolean that will be true if the date is before today plus the days selected and false if not.
-	 */
-	public boolean isDateBeforeNextDays(LocalDate date, long days) {
-		long secondToMiliseconds = 1000;
-		long minuteToSeconds = 60;
-		long hourToMinutes = 60;
-		long dayToHours = 24;
-
-		long daysToMiliseconds = days *  dayToHours * hourToMinutes * minuteToSeconds * secondToMiliseconds;
-		long milisecondsFromEpoch = daysToMiliseconds + LocalDate.now().toEpochDay();
-
-		LocalDate dateToCompare = LocalDate.ofEpochDay(milisecondsFromEpoch);
-
-		return date.isBefore(dateToCompare);
 	}
 }
