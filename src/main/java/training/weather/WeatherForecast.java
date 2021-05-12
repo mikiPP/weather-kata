@@ -13,56 +13,64 @@ import java.util.stream.StreamSupport;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import training.time.Time;
+import training.httpRequestException.HttpRequestException;
+import training.timeUtils.TimeUtils;
 
 public class WeatherForecast {
 
-	private long days = 6;
-	private String url = "https://www.metaweather.com/api/location/";
-	private String format = "yyyy-MM-dd";
-	private HttpRequestFactory requestFactory = new NetHttpTransport().createRequestFactory();
+	private static final long DAYS = 6;
+	private static final String URL = "https://www.metaweather.com/api/location/";
+	private static final String HTTP_ERROR_MESSAGE = "Error fetching data";
+	private static final String DATE_FORMAT = "yyyy-MM-dd";
+	private static final HttpRequestFactory REQUEST_FACTORY = new NetHttpTransport().createRequestFactory();
 
-	public String getCityWeather(String city, LocalDate datetime) throws Exception {
-		LocalDate date = Time.getDate(datetime); 
+	public String obtainCityWeather(final String city, final LocalDate datetime) throws HttpRequestException {
+		LocalDate date = TimeUtils.getDate(datetime);
 
-		if (!Time.isDateBeforeNextDays(date, days)){
+		if (!TimeUtils.isDateBeforeNextDays(date, DAYS)) {
 			return "";
 		}
 
 		try {
-			String woeid = getWoeid(city);
+			String woeid = obtainWoeid(city);
 			String weatherDataResponse = makeHttpCallToApi(woeid);
-			return getDaySelectedWeather(weatherDataResponse,datetime);
+			return obtainWeatherByDate(weatherDataResponse, datetime);
 
-		}	catch (IOException e) {
-			throw new Exception("Error getting data: " + e.getMessage());
+		} catch (HttpRequestException e) {
+			return "SERVICE DOWN, try it again later";
 		}
-	
+
 	}
 
-	private String getWoeid(String city) throws IOException {
-		String cityQueryResponse = makeHttpCallToApi("search/?query=" + city);
-		JSONArray array = new JSONArray(cityQueryResponse);
-		return array.getJSONObject(0).get("woeid").toString();
-	}
-
-
-	private String makeHttpCallToApi(String path) throws IOException {
-		GenericUrl uri = new GenericUrl(path != null ? url + path : url);
-		HttpRequest request = requestFactory.buildGetRequest(uri);
-		return request.execute().parseAsString();
-	}
-
-	public String getDaySelectedWeather(String weatherDataResponse,LocalDate date) {
+	public String obtainWeatherByDate(final String weatherDataResponse, final LocalDate date) {
 
 		JSONArray results = new JSONObject(weatherDataResponse).getJSONArray("consolidated_weather");
 
-		Optional<String> list = StreamSupport.stream(results.spliterator(), false)
-			.map(JSONObject.class::cast)
-			.filter(dayData -> dayData.get("applicable_date").toString().equals(date.format(DateTimeFormatter.ofPattern(this.format))))
-			.map(daySelected -> daySelected.get("weather_state_name").toString())
-			.findFirst();
+		Optional<String> daySelectedWeather = StreamSupport.stream(results.spliterator(), false).map(JSONObject.class::cast)
+				.filter(dayData -> dayData.get("applicable_date").toString()
+						.equals(date.format(DateTimeFormatter.ofPattern(DATE_FORMAT))))
+				.map(daySelected -> daySelected.get("weather_state_name").toString()).findFirst();
 
-		return list.isPresent() ? list.get() : "";
+		return daySelectedWeather.isPresent() ? daySelectedWeather.get() : "";
+	}
+
+	private String obtainWoeid(final String city) throws HttpRequestException {
+
+		String cityQueryResponse = makeHttpCallToApi("search/?query=" + city);
+		JSONArray responseAsArray = new JSONArray(cityQueryResponse);
+		return responseAsArray.getJSONObject(0).get("woeid").toString();
+	}
+
+	private String makeHttpCallToApi(final String path) throws HttpRequestException {
+		try {
+
+			GenericUrl uri = new GenericUrl(path != null ? URL + path : URL);
+			HttpRequest request = REQUEST_FACTORY.buildGetRequest(uri);
+			return request.execute().parseAsString();
+
+		} catch (IOException e) {
+			throw new HttpRequestException(HTTP_ERROR_MESSAGE + e.getMessage());
+		}
+
 	}
 }

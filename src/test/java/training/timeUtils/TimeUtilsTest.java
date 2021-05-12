@@ -1,4 +1,4 @@
-package training.time;
+package training.timeUtils;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -8,14 +8,15 @@ import java.time.LocalDate;
 
 import org.junit.Test;
 
-public class TimeTest {
+
+public class TimeUtilsTest {
   
 
   @Test
 	public void givenNullDateShouldReturnANewDate() {
 
 		 /*------------------- When --------------------- */
-			LocalDate date  = Time.getDate(null);
+			LocalDate date = TimeUtils.getDate(null);
 			LocalDate dateToCompare = LocalDate.now();
 
 			
@@ -29,8 +30,8 @@ public class TimeTest {
 
 		 /*------------------- When --------------------- */
 
-			LocalDate date  = LocalDate.of(2021,05,10);
-			LocalDate dateToCompare  = Time.getDate(date);
+			LocalDate date = LocalDate.of(2021,05,10);
+			LocalDate dateToCompare = TimeUtils.getDate(date);
 
 		 /*------------------- Then  --------------------- */
 			assertEquals(dateToCompare.toString(), date.toString());
@@ -47,13 +48,13 @@ public class TimeTest {
 			long days = 6;
 
 			// We add 1 because we want to check one day after the date selected.
-			long daysToMiliseconds = (days + 1) *  dayToHours * hourToMinutes * minuteToSeconds * secondToMiliseconds;
+			long daysToMiliseconds = (days + 1) *dayToHours * hourToMinutes * minuteToSeconds * secondToMiliseconds;
 
 			LocalDate date = LocalDate.ofEpochDay(LocalDate.now().toEpochDay() + daysToMiliseconds);
 
 		 /*------------------- When --------------------- */
 			
-			Boolean isBeforeSixdays  = Time.isDateBeforeNextDays(date,days);
+			Boolean isBeforeSixdays = TimeUtils.isDateBeforeNextDays(date,days);
 
 		 /*------------------- Then  --------------------- */
 			assertFalse(isBeforeSixdays);
@@ -68,7 +69,7 @@ public class TimeTest {
 
 		 /*------------------- When --------------------- */
 			
-			Boolean isBeforeSixDays  = Time.isDateBeforeNextDays(date,days);
+			Boolean isBeforeSixDays = TimeUtils.isDateBeforeNextDays(date,days);
 
 		 /*------------------- Then  --------------------- */
 			assertTrue(isBeforeSixDays);
