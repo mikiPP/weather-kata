@@ -15,7 +15,7 @@ import training.time.Time;
 public class WeatherForecastTest {
 
 	@Test
-	public void unfinished_test() throws IOException {
+	public void unfinished_test() throws Exception {
 		WeatherForecast weatherForecast = new WeatherForecast();
 		String forecast = weatherForecast.getCityWeather("Madrid", LocalDate.now());
 		System.out.println(forecast);
